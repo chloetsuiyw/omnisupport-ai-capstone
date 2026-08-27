@@ -17,4 +17,7 @@ jobs:
       - name: Compile Python source
         run: python -m compileall -q app starter_code tests
       - name: Run starter and student tests
+        env:
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          MODEL_NAME: ${{ secrets.MODEL_NAME }}
         run: pytest -q tests
