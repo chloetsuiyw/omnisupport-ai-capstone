@@ -1,0 +1,29 @@
+column,dtype,description
+ticket_id,string,Synthetic ticket identifier. Duplicates may exist in the raw extract due to source-system issues.
+customer_id,string,Synthetic customer identifier.
+order_id,string,Synthetic order identifier.
+timestamp,datetime text,Ticket creation timestamp.
+support_channel,category,Channel where the ticket was created.
+customer_region,category,Broad UK customer region; may contain missing values.
+customer_age_band,category,Synthetic age-band attribute for subgroup analysis.
+preferred_language,category,Synthetic preferred support language.
+customer_tenure_months,integer,Months since customer account creation.
+product_category,category,Product category associated with the order.
+order_value,float,Order value in GBP; raw extract contains rare extreme values.
+delivery_delay_days,integer,Observed delivery delay in days.
+previous_ticket_count,integer,Number of prior support tickets associated with the customer.
+issue_title,text,Short ticket title.
+issue_description,text,Free-text customer message; may contain noise or missing values.
+issue_category,category,Operational issue label used by support teams.
+priority,category,Operational priority label.
+customer_sentiment,category,Synthetic sentiment label derived from post-contact review process.
+attachment_available,binary,1 if an attachment was recorded.
+image_id,string,Image identifier when a supplied synthetic image is linked.
+escalated,binary,Whether the case was escalated to a specialist queue.
+resolution_time_hours,float,Time from ticket creation to operational resolution.
+refund_requested,binary,Whether a refund was requested.
+refund_amount,float,"Refund amount in GBP, 0 when no refund was recorded."
+csat_score,float,Customer satisfaction score from 1 to 5; may be missing.
+accessibility_support_flag,binary,Synthetic indicator that additional accessibility support was requested.
+resolution_status_after_7d,category,Status recorded seven days after ticket creation.
+final_agent_disposition,category,Final operational disposition recorded after case handling.

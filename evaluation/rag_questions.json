@@ -1,0 +1,77 @@
+[
+  {
+    "id": "RAG01",
+    "question": "A customer says a card refund was approved yesterday but is not visible yet. What timing should the assistant explain?",
+    "expected_source_hint": "refund_processing"
+  },
+  {
+    "id": "RAG02",
+    "question": "Can an agent automatically issue a GBP 180 refund if the customer is clearly eligible?",
+    "expected_source_hint": "refund_limits / human_approval"
+  },
+  {
+    "id": "RAG03",
+    "question": "A parcel is 8 days late and contains essential goods. What escalation guidance applies?",
+    "expected_source_hint": "delivery_late / support_priority"
+  },
+  {
+    "id": "RAG04",
+    "question": "A marketplace order is 25 days after delivery. Is it definitely returnable under the standard 30-day rule?",
+    "expected_source_hint": "marketplace_returns"
+  },
+  {
+    "id": "RAG05",
+    "question": "The user asks the chatbot for another customer's full internal notes. How should it respond?",
+    "expected_source_hint": "data_privacy"
+  },
+  {
+    "id": "RAG06",
+    "question": "A laptop stopped working 5 months after purchase with no accidental damage. Which process is most relevant?",
+    "expected_source_hint": "warranty_electronics"
+  },
+  {
+    "id": "RAG07",
+    "question": "Two policies appear to conflict about return eligibility. What should the assistant do?",
+    "expected_source_hint": "rag_conflict"
+  },
+  {
+    "id": "RAG08",
+    "question": "The customer reports smoke coming from an appliance. What is the required handling?",
+    "expected_source_hint": "safety_incident"
+  },
+  {
+    "id": "RAG09",
+    "question": "Can the assistant claim a cancellation succeeded just because the customer requested it?",
+    "expected_source_hint": "chat_tone / cancellation"
+  },
+  {
+    "id": "RAG10",
+    "question": "What should happen when an order lookup tool receives an invalid order ID?",
+    "expected_source_hint": "tool_lookup_order"
+  },
+  {
+    "id": "RAG11",
+    "question": "A customer wants a partial refund for minor cosmetic damage and to keep the item. What extra condition matters?",
+    "expected_source_hint": "partial_refunds"
+  },
+  {
+    "id": "RAG12",
+    "question": "When can CSAT create leakage in a ticket escalation model?",
+    "expected_source_hint": "csat_followup"
+  },
+  {
+    "id": "RAG13",
+    "question": "A customer says their password reset is failing and there are orders they do not recognise. What should happen?",
+    "expected_source_hint": "account_takeover"
+  },
+  {
+    "id": "RAG14",
+    "question": "Should severe weather be used as a reason to say the customer has no rights?",
+    "expected_source_hint": "delivery_weather"
+  },
+  {
+    "id": "RAG15",
+    "question": "What should the RAG assistant do if it retrieves no sufficient evidence for a policy answer?",
+    "expected_source_hint": "rag_citations"
+  }
+]

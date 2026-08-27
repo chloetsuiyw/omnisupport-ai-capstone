@@ -1,0 +1,13 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+artifacts/
+models/
+logs/
+data/raw/
+data/subsets/
+outputs/
+starter_code/06_transformers/finetune_checkpoints/
+starter_code/03_deep_learning/*.pt
+.cache/
