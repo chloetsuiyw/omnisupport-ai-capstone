@@ -5,8 +5,6 @@ __pycache__/
 artifacts/
 models/
 logs/
-data/raw/
-data/subsets/
 outputs/
 starter_code/06_transformers/finetune_checkpoints/
 starter_code/03_deep_learning/*.pt
