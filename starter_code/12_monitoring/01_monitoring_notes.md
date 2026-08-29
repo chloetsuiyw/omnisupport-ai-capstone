@@ -25,7 +25,7 @@ Root cause: .env had a space after the = sign (LLM_API_KEY= sk-or-...), which py
 Fix: removed the stray space in .env. No rebuild required since .env is read at docker run time via --env-file, not baked into the image. Restarted the container; diagnostic confirmed 73 characters with no leading space. /ask/policy then returned 200 with a correctly grounded, cited answer.
 
 ## Monitoring Summary
-Full metrics captured in monitoring/monitoring_summary.csv, generated via monitoring.py (Session 30 starter, completed with record_request, record_rag_outcome, and record_agent_tool_failure implementations), drawing on Phase 9 (LLM benchmark), Phase 10 (RAG retrieval behavior), Phase 12a (RAG evaluation), Phase 12b (prompt evaluation), and this phase's live container test.
+Full metrics captured in monitoring/monitoring_summary_template.csv, generated via monitoring.py (Session 30 starter, completed with record_request, record_rag_outcome, and record_agent_tool_failure implementations), drawing on Phase 9 (LLM benchmark), Phase 10 (RAG retrieval behavior), Phase 12a (RAG evaluation), Phase 12b (prompt evaluation), and this phase's live container test.
 
 Latency & cost (Phase 9, 20-request benchmark on google/gemini-2.5-flash): mean latency 541ms, range 328–890ms, acceptable for asynchronous ticket triage, not real-time chat. 1,568 total tokens across 20 requests, cost $0.000594, extrapolating to roughly $0.30/day at 10,000 tickets/day. Earlier free-tier testing hit persistent 429 rate limits even with exponential backoff; switching to paid tier resolved this immediately, a cost-reliability trade-off worth flagging explicitly.
 
