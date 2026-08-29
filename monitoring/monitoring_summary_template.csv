@@ -1,2 +1,2 @@
 request_count,average_latency_ms,failure_count,rag_no_answer_rate,agent_tool_failure_count,model_version,prompt_version
-0,0.0,0,0.0,0,TODO,TODO
+22,546.3636363636363,1,0.13333333333333333,0,google/gemini-2.5-flash,rag_policy_prompt_v1
