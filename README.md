@@ -56,8 +56,6 @@ LLM_API_KEY=<your OpenRouter API key>
 MODEL_NAME=google/gemini-2.5-flash
 ```
 
-For CI (.github/workflows/tests.yml), the same LLM_API_KEY and MODEL_NAME values are configured as GitHub repository secrets rather than a committed .env file, so tests can run in GitHub's cloud environment without exposing the key.
-
 **Run the API:**
 ```bash
 python starter_code/10_api/main.py
@@ -93,7 +91,7 @@ Two targets defined against a real operational pain point: resolution time (regr
 ### 2. Data quality and preprocessing
 `starter_code/01_data/02_data_audit_summary.md`
 
-Full audit of 1,000,000 rows across 10 shards: two distinct missingness patterns (true NaN in `csat_score`; blank-string missingness in `customer_region`/`issue_description` that a plain `.isna()` check would miss), 4,000 exact duplicates removed, three casing inconsistencies merged, and column-specific outlier handling (capping with a retained flag for `order_value`; no action for `delivery_delay_days`, since IQR produces a meaningless negative bound on a floor-bounded count variable). A distinct cluster of 348 rows with resolution time > 300 hours was traced to a definitional relationship with `resolution_status_after_7d = "open_after_7d"`, this same anomaly resurfaces independently in the Phase 4 regression error analysis and the Phase 5 clustering validation (Cluster 3), which is used later as a positive validation signal.
+Full audit of 1,000,000 rows across 10 shards: two distinct missingness patterns (true NaN in `csat_score`; blank-string missingness in `customer_region`/`issue_description` that a plain `.isna()` check would miss), 4,000 exact duplicates removed, three casing inconsistencies merged, and column-specific outlier handling (capping with a retained flag for `order_value`; no action for `delivery_delay_days`, since IQR produces a meaningless negative bound on a floor-bounded count variable). A distinct cluster of 348 rows with resolution time > 300 hours was traced to a definitional relationship with `resolution_status_after_7d = "open_after_7d"` — this same anomaly resurfaces independently in the Phase 4 regression error analysis and the Phase 5 clustering validation (Cluster 3), which is used later as a positive validation signal.
 
 ### 3. EDA and feature engineering
 Covered within `01_data/02_data_audit_summary.md` and `02_ml/01_regression_notes.md` / `02_classification_notes.md`.
@@ -104,16 +102,16 @@ Key EDA finding: escalation rate varies from ~24% to ~64% by `issue_category` (l
 `starter_code/02_ml/01_regression_notes.md`, `02_classification_notes.md`
 
 - **Regression:** Random Forest MAE 3.76 hrs vs. DummyRegressor baseline 6.77 hrs (44% reduction). `issue_category` (lost_parcel: 23.8%) dominates feature importance.
-- **Classification:** Random Forest F1 0.557 / PR-AUC 0.573 (escalated class) vs. DummyClassifier F1 0.0. `previous_ticket_count` (33.0%) is the dominant feature, notably different from the regression model's top feature, indicating the two tasks have substantially different drivers.
+- **Classification:** Random Forest F1 0.557 / PR-AUC 0.573 (escalated class) vs. DummyClassifier F1 0.0. `previous_ticket_count` (33.0%) is the dominant feature — notably different from the regression model's top feature, indicating the two tasks have substantially different drivers.
 - Controlled `max_depth` experiment (6/12/20/None) shows MAE and RMSE disagree on the optimum; `max_depth=12` was retained, explicitly justified by the business use case favoring MAE.
 
 ### 5. Model evaluation and tuning
 Same files as above, plus the cross-validation/subgroup section at the bottom of `02_classification_notes.md`.
 
-- 5-fold stratified CV: mean macro F1 0.6601, std 0.0018, stable across folds.
+- 5-fold stratified CV: mean macro F1 0.6601, std 0.0018 — stable across folds.
 - Full probability-threshold table (0.3–0.7) enabling the business to pick an operating point by senior-agent review capacity.
 - Held-out test set confirms validation-set metrics to within 0.001 (F1 0.5570 → 0.5577), demonstrating no overfitting to the validation set despite extensive analysis against it.
-- Demographic subgroup fairness across 10 UK regions + "Unknown": F1 spread of just 0.014 (0.5505–0.5644), no region systematically underserved.
+- Demographic subgroup fairness across 10 UK regions + "Unknown": F1 spread of just 0.014 (0.5505–0.5644) — no region systematically underserved.
 
 ### 6. Unsupervised learning and clustering
 `starter_code/02_ml/03_clustering_notes.md`
@@ -123,7 +121,7 @@ KMeans (k=2–6) selected via silhouette score (sampled at 20k customers); k=4 c
 ### 7. Deep learning
 `starter_code/03_deep_learning/01_deep_learning_notes.md`
 
-A small feedforward network (61→64→32→1) trained on the same feature set/split as the Phase 4 regression task, for direct comparability. Learning-rate comparison (0.01/0.001/0.0001) shows all three converge to ~3.50 MAE, indicating a genuine architecture/feature-set ceiling rather than a tuning artifact. Marginally beats the Random Forest (3.50 vs. 3.76) but plateaus almost immediately — Random Forest is judged the more practical choice given comparable accuracy at lower complexity. Checkpoint saved (`outputs/03_deep_learning/tabular_nn_checkpoint.pt`); `torch.manual_seed(42)` for reproducibility.
+A small feedforward network (61→64→32→1) trained on the same feature set/split as the Phase 4 regression task, for direct comparability. Learning-rate comparison (0.01/0.001/0.0001) shows all three converge to ~3.50 MAE, indicating a genuine architecture/feature-set ceiling rather than a tuning artifact. Marginally beats the Random Forest (3.50 vs. 3.76) but plateaus almost immediately, Random Forest is judged the more practical choice given comparable accuracy at lower complexity. Checkpoint saved (`outputs/03_deep_learning/tabular_nn_checkpoint.pt`); `torch.manual_seed(42)` for reproducibility.
 
 ### 8. Computer vision
 `starter_code/04_computer_vision/01_vision_notes.md`
@@ -142,13 +140,12 @@ Basic 3-layer CNN trained from scratch reaches 100% test accuracy on 480 synthet
 ### 10. Prompt engineering and LLM application performance
 `starter_code/07_llm/01_llm_notes.md`
 
-Pydantic-validated structured ticket extraction; 5/5 hand-written regression tests passing on the paid model. **20-request benchmark (mandatory, Session 25):** mean latency 541ms (range 328–890ms), 1,568 total tokens, cost $0.000594, extrapolated to ~$0.30/day at 10,000 tickets/day. Explicit trade-off discussion: free-tier `google/gemma-4-26b-a4b-it:free` hit persistent 429 rate limits under sustained load even with exponential backoff, motivating a switch to a low-cost paid tier; latency variance (2.7× range) is flagged as a reliability consideration for production timeout/fallback design.
+Pydantic-validated structured ticket extraction; 5/5 hand-written regression tests passing on the paid model. **20-request benchmark (mandatory, Session 25):** mean latency 541ms (range 328–890ms), 1,568 total tokens, cost $0.000594 — extrapolated to ~$0.30/day at 10,000 tickets/day. Explicit trade-off discussion: free-tier `google/gemma-4-26b-a4b-it:free` hit persistent 429 rate limits under sustained load even with exponential backoff, motivating a switch to a low-cost paid tier; latency variance (2.7× range) is flagged as a reliability consideration for production timeout/fallback design.
 
 ### 11. RAG
 `starter_code/08_rag/01_rag_notes.md`, `starter_code/10_evaluation/01_rag_evaluation_notes.md`
 
-40 policy documents chunked (300-word/50-word overlap; effectively one chunk per document given document length), embedded with `all-MiniLM-L6-v2`, retrieved via cosine similarity, answered by `google/gemini-2.5-flash` with mandatory source citation and explicit no-answer instructions. Chunking comparison (300-word vs. 40-word) shows finer chunking improves retrieval precision at a 3× storage cost, judged a close-to-a-wash trade-off for this short-document knowledge base. 
-**Evaluation on 15 independent questions:** 13/15 (87%) confidently correct and cited; 2/15 correctly refused rather than fabricated; average top retrieval score 0.547; no hallucinations observed. A clear retrieval-score gap between answerable (0.50–0.70) and out-of-scope (0.17–0.18) questions is used to justify a proposed 0.5 human-review threshold, further corroborated by a live post-deployment test (see Section 16).
+40 policy documents chunked (300-word/50-word overlap; effectively one chunk per document given document length), embedded with `all-MiniLM-L6-v2`, retrieved via cosine similarity, answered by `google/gemini-2.5-flash` with mandatory source citation and explicit no-answer instructions. Chunking comparison (300-word vs. 40-word) shows finer chunking improves retrieval precision at a 3× storage cost, judged a close-to-a-wash trade-off for this short-document knowledge base. **Evaluation on 15 independent questions:** 13/15 (87%) confidently correct and cited; 2/15 correctly refused rather than fabricated; average top retrieval score 0.547; no hallucinations observed. A clear retrieval-score gap between answerable (0.50–0.70) and out-of-scope (0.17–0.18) questions is used to justify a proposed 0.5 human-review threshold, further corroborated by a live post-deployment test (see Section 16).
 
 ### 12. Agent and tool calling
 `starter_code/09_agents/01_agent_notes.md`
@@ -156,9 +153,11 @@ Pydantic-validated structured ticket extraction; 5/5 hand-written regression tes
 Five local tools (`lookup_order`, `lookup_customer`, `check_return_eligibility`, `calculate_refund`, `search_policy`) against the supplied 15,000-order operational store, with in-memory caching per the starter code's guidance. Design principle: the LLM only performs intent extraction; all approval-threshold logic is enforced in code ("LLM proposes, code disposes"). The £100 frontline approval threshold triggers on whichever is higher, the tool's calculated amount or the customer's requested amount, closing a gap that would otherwise let an inflated demand through unchecked (test case A03). All 8 supplied test cases pass, covering missing-information handling (A04), refused account changes (A06), avoided false action confirmation (A07), and safety escalation (A08). Documented limitation: intent routing depends on LLM extraction quality, and a larger adversarial test set is recommended for production.
 
 ### 13. Evaluation, guardrails and testing
-`starter_code/10_evaluation/01_rag_evaluation_notes.md`, `02_prompt_evaluation_notes.md`, `tests/starter_tests/`
+`starter_code/10_evaluation/01_rag_evaluation_notes.md`, `02_prompt_evaluation_notes.md`, `tests/starter_tests/`, `tests/extended_tests/test_escalation_endpoint.py`
 
-15-question RAG evaluation (above) plus a 10-case prompt evaluation: 10/10 schema-complete, 3/3 safety-critical cases correctly handled (refused unsafe secret collection; correctly distinguished a proposed refund from a completed action; avoided an unsupported compatibility claim). A methodology note documents a genuine evaluation-tooling bug caught and fixed: an early automated refusal-detection pass over-counted refusals via a naive keyword check, corrected to check only answer-initial phrasing. Automated contract tests extended in `tests/starter_tests/` beyond the starter scaffolding.
+15-question RAG evaluation (above) plus a 10-case prompt evaluation: 10/10 schema-complete, 3/3 safety-critical cases correctly handled (refused unsafe secret collection; correctly distinguished a proposed refund from a completed action; avoided an unsupported compatibility claim). A methodology note documents a genuine evaluation-tooling bug caught and fixed: an early automated refusal-detection pass over-counted refusals via a naive keyword check, corrected to check only answer-initial phrasing.
+
+**Test suite integrity fix.** During final review, 4 of the 10 starter test files (`test_api_health.py`, `test_api_schema_validation.py`, `test_rag_contract.py`, `test_vision_contract.py`) were found to import the original stub API (`app/api/main.py`, where every endpoint raises `HTTPException(501)`) rather than the real implementation at `starter_code/10_api/main.py`. This meant these tests were passing or skipping against dead code, not validating actual system behavior. Three were corrected to load the real app via `importlib.util` (matching the pattern already used by the agent/structured-output tests) and target the real endpoint paths and status codes (e.g. `/ask/policy`'s manual empty-question check returns 400, not the stub's 422); `test_vision_contract.py` was deliberately left as-is, since the real API does not expose a vision endpoint (CNN evaluation is validated via direct module testing in Phase 8 instead). A second issue surfaced once the tests targeted the real app: `TestClient` was being used without triggering FastAPI's `startup` event, so the classifier and RAG index never loaded, causing spurious 503s — fixed by explicitly entering the `TestClient` context (`client.__enter__()`). A new file, `tests/extended_tests/test_escalation_endpoint.py`, adds genuinely new coverage for `/predict/escalation` (valid-request probability bounds, missing-field rejection, and a directional sanity check that a high-priority/high-ticket-history profile scores at least as high as a low-risk one), an endpoint with no prior test coverage at all. All 16 active tests pass in CI after also adding the previously-missing `pyarrow` dependency to `requirements-ci.txt` (needed once these tests began actually loading the parquet dataset via the real startup path).
 
 ### 14. Responsible AI and governance
 `starter_code/10_evaluation/03_responsible_ai_risk_register.md`
@@ -187,7 +186,7 @@ Each phase's notes file follows a consistent structure (setup → results → in
 
 - **Synthetic data separability.** Several components (image classification, TF-IDF text classification, DistilBERT fine-tuning) reach near-perfect or perfect scores. This is explicitly attributed throughout to the synthetic dataset's templated/highly-separable structure, not claimed as evidence of real-world generalization.
 - **No persistent request logging.** The monitoring summary is backfilled from evaluation-phase results and one live container test, not a running production log (see Section 16 and the Responsible AI risk register's Auditability row).
-- **Fixed business thresholds.** The £100 agent-approval limit and the proposed 0.5 RAG human-review threshold are both currently hard-coded design choices, not values that adapt per customer/order risk profile — flagged as an intentional scope simplification in both the agent notes and the risk register.
+- **Fixed business thresholds.** The £100 agent-approval limit and the proposed 0.5 RAG human-review threshold are both currently hard-coded design choices, not values that adapt per customer/order risk profile, flagged as an intentional scope simplification in both the agent notes and the risk register.
 - **Subgroup fairness scope.** Demographic fairness analysis (Section 5) covers `customer_region` only; other attributes (age band, language, accessibility flag) are not yet analyzed, and the risk register recommends extending this before production use.
 - **LLM-dependent intent routing.** The agent's tool selection depends on LLM extraction quality from free text; all 8 supplied test cases pass, but a larger adversarial test set is recommended before production deployment.
 
@@ -206,6 +205,6 @@ tests/               # Automated contract tests (starter + extensions)
 
 ## Demo
 
-A short screen-recorded walkthrough of the working system is available here (unlisted YouTube video): (https://youtu.be/XpW0GlPVRz4)
+A short screen-recorded walkthrough of the working system is available here (unlisted YouTube video): **https://youtu.be/XpW0GlPVRz4**
 
-The recording covers: the Streamlit Escalation Risk Predictor tab returning a live probability score for a sample ticket, the Policy Assistant tab returning a cited RAG answer to a policy question, and a walkthrough of the Docker container running the same system end-to-end via the FastAPI /docs interface.
+The recording covers: the Streamlit Escalation Risk Predictor tab returning a live probability score for a sample ticket, the Policy Assistant tab returning a cited RAG answer to a policy question, and a walkthrough of the Docker container running the same system end-to-end via the FastAPI `/docs` interface.
